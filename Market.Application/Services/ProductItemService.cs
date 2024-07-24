@@ -3,6 +3,7 @@ using Market.Data.DbContexts;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
+using Market.Domain.Extensions;
 
 namespace Market.Application.Services;
 
@@ -13,10 +14,11 @@ public class ProductItemService(AppDbContext dbContext) : IProductItemService
         var productItem = new ProductItem
         {
             Id = Guid.NewGuid(),
+            Title = productItemDTO.Title,
             ProductId = productItemDTO.ProductId,
             Code = productItemDTO.Code,
             UserId = userId,
-            CreatedDate = DateTime.Now
+            CreatedDate = Helper.GetCurrentDateTime()
         };
 
         await dbContext.ProductItems.AddAsync(productItem);
@@ -31,7 +33,7 @@ public class ProductItemService(AppDbContext dbContext) : IProductItemService
             ?? throw new EntityNotFoundException(typeof(ProductItem));
 
         productItem.IsDeleted = true;
-        productItem.DeletedDate = DateTime.Now;
+        productItem.DeletedDate = Helper.GetCurrentDateTime();
 
         dbContext.ProductItems.Update(productItem);
         await dbContext.SaveChangesAsync();
@@ -57,7 +59,8 @@ public class ProductItemService(AppDbContext dbContext) : IProductItemService
 
         productItem.ProductId = productItemDTO.ProductId;
         productItem.Code = productItemDTO.Code;
-        productItem.UpdatedDate = DateTime.Now;
+        productItem.Title = productItemDTO.Title;
+        productItem.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.ProductItems.Update(productItem);
         await dbContext.SaveChangesAsync();

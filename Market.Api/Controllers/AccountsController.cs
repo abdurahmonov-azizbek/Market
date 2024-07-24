@@ -40,19 +40,19 @@ public class AccountsController(
             : BadRequest(new Response(400, "Fail", result));
     }
 
-    [HttpPut("users/{userId}/grand/role/{role}")]
-    [Authorize]
-    public async ValueTask<IActionResult> GrandRole([FromRoute] Guid userId, [FromRoute] Role role)
-    {
-        var result = await accountService.GrandRoleAsync(new GrandRoleDetails
-        {
-            FromUserId = Guid.Parse(HttpContext.GetValueByClaimType("Id")),
-            ToUserId = userId,
-            Role = role
-        });
+    //[HttpPut("users/{userId}/grand/role/{role}")]
+    //[Authorize]
+    //public async ValueTask<IActionResult> GrandRole([FromRoute] Guid userId, [FromRoute] Role role)
+    //{
+    //    var result = await accountService.GrandRoleAsync(new GrandRoleDetails
+    //    {
+    //        FromUserId = Guid.Parse(HttpContext.GetValueByClaimType("Id")),
+    //        ToUserId = userId,
+    //        Role = role
+    //    });
 
-        return result
-           ? Ok(new Response(200, "Success", result))
-           : BadRequest(new Response(400, "Fail", result));
-    }
+    //    return result
+    //       ? Ok(new Response(200, "Success", result))
+    //       : BadRequest(new Response(400, "Fail", result));
+    //}
 }

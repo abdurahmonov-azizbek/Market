@@ -1,5 +1,4 @@
-﻿using Market.Data.Converters;
-using Market.Domain.Entities;
+﻿using Market.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Market.Data.DbContexts;
@@ -15,7 +14,7 @@ public class AppDbContext : DbContext
 
     public AppDbContext(DbContextOptions options) : base(options)
     {
-        Database.Migrate();
+        this.Database.Migrate();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,19 +25,6 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Product>().HasQueryFilter(product => !product.IsDeleted);
         modelBuilder.Entity<ProductItem>().HasQueryFilter(productItem => !productItem.IsDeleted);
         modelBuilder.Entity<Debt>().HasQueryFilter(debt => !debt.IsDeleted);
-
-        var dateTimeConverter = new DateTimeToUtcConverter();
-
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            var properties = entityType.ClrType.GetProperties()
-                .Where(p => p.PropertyType == typeof(DateTime) || p.PropertyType == typeof(DateTime?));
-
-            foreach (var property in properties)
-            {
-                modelBuilder.Entity(entityType.Name).Property(property.Name).HasConversion(dateTimeConverter);
-            }
-        }
 
         modelBuilder.Entity<User>().HasData(
             new User

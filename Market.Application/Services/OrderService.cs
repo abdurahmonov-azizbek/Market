@@ -3,6 +3,7 @@ using Market.Data.DbContexts;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
+using Market.Domain.Extensions;
 using System.Data;
 
 namespace Market.Application.Services;
@@ -17,7 +18,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
             ProductItemId = orderDTO.ProductItemId,
             Price = orderDTO.Price,
             UserId = userId,
-            CreatedDate = DateTime.Now
+            CreatedDate = Helper.GetCurrentDateTime()
         };
             
         await dbContext.Orders.AddAsync(order);
@@ -32,7 +33,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
             ?? throw new EntityNotFoundException(typeof(Order));
 
         order.IsDeleted = true;
-        order.DeletedDate = DateTime.Now;
+        order.DeletedDate = Helper.GetCurrentDateTime();
 
         dbContext.Orders.Update(order);
         await dbContext.SaveChangesAsync();
@@ -58,7 +59,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
 
         order.ProductItemId = orderDTO.ProductItemId;
         order.Price = orderDTO.Price;
-        order.UpdatedDate = DateTime.Now;
+        order.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.Orders.Update(order);
         await dbContext.SaveChangesAsync();

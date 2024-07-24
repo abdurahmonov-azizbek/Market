@@ -2,7 +2,9 @@
 using Market.Api.Models;
 using Market.Application.Interfaces;
 using Market.Domain.DTOs;
+using Market.Domain.Entities;
 using Market.Domain.Enums;
+using Market.Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,19 +12,25 @@ namespace Market.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "SuperAdmin,System")]
+[Authorize(Roles = "System,SuperAdmin")]
 public class UsersController(IUserService userService) : ControllerBase
 {
     [HttpPost]
     public async ValueTask<IActionResult> Create(UserDTO userDTO)
     {
-        var userRole = HttpContext.GetValueByClaimType("Role");
-        var role = (Role)Enum.Parse(typeof(Role), userRole);
+        var creatorUserRole = HttpContext.GetValueByClaimType("Role");
+        var creatorUserId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
 
-        if (role > userDTO.Role)
-            throw new InvalidOperationException("Access denied!");
+        if (creatorUserRole == "Admin")
+            throw new InvalidOperationException("You can't creat user!");
 
-        var result = await userService.CreateAsync(userDTO);
+        if (creatorUserRole == "System" && userDTO.Role != Role.SuperAdmin)
+            throw new InvalidOperationException("You can create only Super admins!");
+
+        if (creatorUserRole == "SuperAdmin" && userDTO.Role != Role.Admin)
+            throw new InvalidOperationException("You can create only admins!");
+
+        var result = await userService.CreateAsync(creatorUserId, userDTO);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
@@ -32,7 +40,8 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpGet]
     public async ValueTask<IActionResult> GetAll()
     {
-        var result = await userService.GetAllAsync();
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
+        var result = await userService.GetAllAsync(userId);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
@@ -42,7 +51,11 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpGet("{userId}")]
     public async ValueTask<IActionResult> GetById([FromRoute] Guid userId)
     {
+        var id = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
         var result = await userService.GetByIdAsync(userId);
+
+        if (result is not null && result.CreatedBy != id)
+            return BadRequest(new Response(400, "Fail"));
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
@@ -52,7 +65,16 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpPut]
     public async ValueTask<IActionResult> Update(Guid userId, UserDTO userDTO)
     {
+        var currentUserId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
+
+        var targetUser = await userService.GetByIdAsync(userId)
+            ?? throw new EntityNotFoundException(typeof(User));
+
+        if (targetUser.CreatedBy != currentUserId)
+            throw new InvalidOperationException("You can't update this user!");
+
         var result = await userService.UpdateAsync(userId, userDTO);
+
         return result is not null
             ? Ok(new Response(200, "Success", result))
             : BadRequest(new Response(400, "Fail"));
@@ -61,6 +83,14 @@ public class UsersController(IUserService userService) : ControllerBase
     [HttpDelete("{userId}")]
     public async ValueTask<IActionResult> DeleteById(Guid userId)
     {
+        var currentUserId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
+
+        var targetUser = await userService.GetByIdAsync(userId)
+          ?? throw new EntityNotFoundException(typeof(User));
+
+        if (targetUser.CreatedBy != currentUserId)
+            throw new InvalidOperationException("You can't delete this user!");
+
         var result = await userService.DeleteById(userId);
 
         return result is not null

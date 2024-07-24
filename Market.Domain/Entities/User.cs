@@ -10,4 +10,5 @@ public class User : EntityBase
     public string Email { get; set; } = default!;
     public string Password { get; set; } = default!;
     public Role Role { get; set; } = Role.Admin;
+    public Guid CreatedBy { get; set; }
 }

@@ -3,6 +3,7 @@ using Market.Data.DbContexts;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
+using Market.Domain.Extensions;
 
 namespace Market.Application.Services;
 
@@ -19,7 +20,7 @@ public class ProductService(AppDbContext dbContext) : IProductService
             Percent = ((productDTO.SalePrice - productDTO.IncomingPrice) / productDTO.IncomingPrice) * 100,
             UserId = userId,
             CategoryId = productDTO.CategoryId,
-            CreatedDate = DateTime.Now
+            CreatedDate = Helper.GetCurrentDateTime()
         };
 
         await dbContext.Products.AddAsync(product);
@@ -34,7 +35,7 @@ public class ProductService(AppDbContext dbContext) : IProductService
             ?? throw new EntityNotFoundException(typeof(Product));
 
         product.IsDeleted = true;
-        product.DeletedDate = DateTime.Now;
+        product.DeletedDate = Helper.GetCurrentDateTime();
 
         dbContext.Products.Update(product);
         await dbContext.SaveChangesAsync();
@@ -63,7 +64,7 @@ public class ProductService(AppDbContext dbContext) : IProductService
         product.SalePrice = productDTO.SalePrice;
         product.Percent = ((productDTO.SalePrice - productDTO.IncomingPrice) / productDTO.IncomingPrice) * 100;
         product.CategoryId = productDTO.CategoryId;
-        product.UpdatedDate = DateTime.Now;
+        product.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.Products.Update(product);
         await dbContext.SaveChangesAsync();

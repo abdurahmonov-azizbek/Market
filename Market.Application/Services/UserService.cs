@@ -3,12 +3,13 @@ using Market.Data.DbContexts;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
+using Market.Domain.Extensions;
 
 namespace Market.Application.Services;
 
 public class UserService(AppDbContext dbContext) : IUserService
 {
-    public async ValueTask<User> CreateAsync(UserDTO userDTO)
+    public async ValueTask<User> CreateAsync(Guid createdBy, UserDTO userDTO)
     {
         var user = new User
         {
@@ -18,7 +19,8 @@ public class UserService(AppDbContext dbContext) : IUserService
             Email = userDTO.Email,
             Role = userDTO.Role,
             Password = userDTO.Password,
-            CreatedDate = DateTime.Now,
+            CreatedBy = createdBy,
+            CreatedDate = Helper.GetCurrentDateTime()
         };
 
         var entityEntry = await dbContext.Users.AddAsync(user);
@@ -33,15 +35,15 @@ public class UserService(AppDbContext dbContext) : IUserService
             ?? throw new EntityNotFoundException(typeof(User));
 
         user.IsDeleted = true;
-        user.DeletedDate = DateTime.Now;
+        user.DeletedDate = Helper.GetCurrentDateTime();
         dbContext.Users.Update(user);
         await dbContext.SaveChangesAsync();
 
         return user;
     }
 
-    public ValueTask<IQueryable<User>> GetAllAsync()
-        => new(dbContext.Users.AsQueryable());
+    public ValueTask<IQueryable<User>> GetAllAsync(Guid userId)
+        => new(dbContext.Users.AsQueryable().Where(x => x.Id == userId));
 
     public async ValueTask<User> GetByIdAsync(Guid userId)
     {
@@ -61,7 +63,7 @@ public class UserService(AppDbContext dbContext) : IUserService
         user.Email = userDTO.Email;
         user.Password = userDTO.Password;
         user.Role = userDTO.Role;
-        user.UpdatedDate = DateTime.Now;
+        user.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.Users.Update(user);
         await dbContext.SaveChangesAsync();

@@ -18,7 +18,8 @@ public static class DependencyInjection
             .AddScoped<ITokenService, TokenService>()
             .AddScoped<IAuthService, AuthService>()
             .AddScoped<IAccountService, AccountService>()
-            .AddScoped<IDebtService, DebtService>();
+            .AddScoped<IDebtService, DebtService>()
+            .AddScoped<IStatisticService, StatisticService>();
 
         return services;
     }

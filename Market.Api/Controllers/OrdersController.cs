@@ -1,6 +1,8 @@
-﻿using Market.Api.Models;
+﻿using Market.Api.Extensions;
+using Market.Api.Models;
 using Market.Application.Interfaces;
 using Market.Domain.DTOs;
+using Market.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,8 +10,10 @@ namespace Market.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")]
-public class OrdersController(IOrderService orderService) : ControllerBase
+[Authorize(Roles = "SuperAdmin,Admin")]
+public class OrdersController(
+    IOrderService orderService,
+    IUserService userService) : ControllerBase
 {
     [HttpPost]
     public async ValueTask<IActionResult> Create(OrderDTO orderDTO)
@@ -26,11 +30,35 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     public async ValueTask<IActionResult> GetAll()
     {
         var userId = Guid.Parse(HttpContext.GetServerVariable("Id")!);
-        var result = await orderService.GetAll(userId);
+        var currentUserRole = HttpContext.GetValueByClaimType("Role");
 
-        return result is not null
-            ? Ok(new Response(200, "Success", result))
-            : BadRequest(new Response(400, "Fail"));
+        if (currentUserRole == "Admin")
+        {
+            var result = await orderService.GetAll(userId);
+
+            return result is not null
+                ? Ok(new Response(200, "Success", result))
+                : BadRequest(new Response(400, "Fail"));
+        }
+        else
+        {
+            var admins = await userService.GetAllAsync(userId);
+
+            var result = new List<Order>();
+            foreach (var admin in admins)
+            {
+                var adminOrders = await orderService.GetAll(admin.Id);
+
+                if (adminOrders is not null)
+                    result.AddRange(adminOrders);
+            }
+
+            result.AddRange(await orderService.GetAll(userId));
+
+            return result is not null
+                ? Ok(new Response(200, "Success", result))
+                : BadRequest(new Response(400, "Fail"));
+        }
     }
 
     [HttpGet("{orderId}")]

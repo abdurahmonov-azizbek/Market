@@ -2,6 +2,7 @@
 using Market.Api.Models;
 using Market.Application.Interfaces;
 using Market.Domain.DTOs;
+using Market.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,7 @@ namespace Market.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = nameof(Role.SuperAdmin))]
 public class ProductsController(IProductService productService) : ControllerBase
 {
     [HttpPost]

@@ -10,7 +10,7 @@ namespace Market.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = nameof(Role.Admin))]
+[Authorize(Roles = nameof(Role.SuperAdmin))]
 public class CategoriesController(ICategoryService categoryService) : ControllerBase
 {
     [HttpPost]

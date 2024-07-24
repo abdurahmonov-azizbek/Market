@@ -70,6 +70,7 @@ namespace Market.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: true),
                     ProductId = table.Column<Guid>(type: "uuid", nullable: false),
                     Code = table.Column<long>(type: "bigint", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -114,6 +115,7 @@ namespace Market.Data.Migrations
                     Email = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -126,8 +128,8 @@ namespace Market.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "CreatedDate", "DeletedDate", "Email", "FirstName", "IsDeleted", "LastName", "Password", "Role", "UpdatedDate" },
-                values: new object[] { new Guid("5e8791a2-0ab2-436d-9b19-493336e24d87"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin", "Admin", false, "Admin", "$2a$11$/BEZ4kXZ9kFaFdMQn6QB6OQ3ZzlVCRVtt.5vNUVorqe/LkM6lL07m", 2, null });
+                columns: new[] { "Id", "CreatedBy", "CreatedDate", "DeletedDate", "Email", "FirstName", "IsDeleted", "LastName", "Password", "Role", "UpdatedDate" },
+                values: new object[] { new Guid("5e8791a2-0ab2-436d-9b19-493336e24d87"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "admin", "Admin", false, "Admin", "$2a$11$/BEZ4kXZ9kFaFdMQn6QB6OQ3ZzlVCRVtt.5vNUVorqe/LkM6lL07m", 2, null });
         }
 
         /// <inheritdoc />

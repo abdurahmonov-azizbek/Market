@@ -3,6 +3,7 @@ using Market.Data.DbContexts;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
+using Market.Domain.Extensions;
 
 namespace Market.Application.Services;
 
@@ -15,7 +16,7 @@ public class CategoryService(AppDbContext dbContext) : ICategoryService
             Id = Guid.NewGuid(),
             Title = categoryDTO.Title,
             UserId = userId,
-            CreatedDate = DateTime.Now,
+            CreatedDate = Helper.GetCurrentDateTime(),
         };
 
         await dbContext.Categories.AddAsync(category);
@@ -30,7 +31,7 @@ public class CategoryService(AppDbContext dbContext) : ICategoryService
             ?? throw new EntityNotFoundException(typeof(Category));
 
         category.IsDeleted = true;
-        category.DeletedDate = DateTime.Now;
+        category.DeletedDate = Helper.GetCurrentDateTime();
 
         dbContext.Categories.Update(category);
         await dbContext.SaveChangesAsync();
@@ -55,7 +56,7 @@ public class CategoryService(AppDbContext dbContext) : ICategoryService
             ?? throw new EntityNotFoundException(typeof(Category));
 
         category.Title = categoryDTO.Title;
-        category.UpdatedDate = DateTime.Now;
+        category.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.Categories.Update(category);
         await dbContext.SaveChangesAsync();

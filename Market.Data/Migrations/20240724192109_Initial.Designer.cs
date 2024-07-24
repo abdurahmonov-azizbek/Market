@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Market.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240724081718_Initial")]
+    [Migration("20240724192109_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -186,6 +186,9 @@ namespace Market.Data.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -201,6 +204,9 @@ namespace Market.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatedBy")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -242,6 +248,7 @@ namespace Market.Data.Migrations
                         new
                         {
                             Id = new Guid("5e8791a2-0ab2-436d-9b19-493336e24d87"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin",
                             FirstName = "Admin",

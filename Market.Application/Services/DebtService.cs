@@ -3,6 +3,7 @@ using Market.Data.DbContexts;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
+using Market.Domain.Extensions;
 
 namespace Market.Application.Services;
 
@@ -17,7 +18,7 @@ public class DebtService(AppDbContext dbContext) : IDebtService
             Type = debtDTO.Type,
             Price = debtDTO.Price,
             UserId = userId,
-            CreatedDate = DateTime.Now
+            CreatedDate = Helper.GetCurrentDateTime()
         };
 
         await dbContext.Debts.AddAsync(debt);
@@ -32,7 +33,7 @@ public class DebtService(AppDbContext dbContext) : IDebtService
             ?? throw new EntityNotFoundException(typeof(Debt));
 
         debt.IsDeleted = true;
-        debt.DeletedDate = DateTime.Now;
+        debt.DeletedDate = Helper.GetCurrentDateTime();
 
         dbContext.Debts.Update(debt);
         await dbContext.SaveChangesAsync();
@@ -59,7 +60,7 @@ public class DebtService(AppDbContext dbContext) : IDebtService
         debt.Title = debtDTO.Title;
         debt.Price = debtDTO.Price;
         debt.Type = debtDTO.Type;
-        debt.UpdatedDate = DateTime.Now;
+        debt.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.Debts.Update(debt);
         await dbContext.SaveChangesAsync();
