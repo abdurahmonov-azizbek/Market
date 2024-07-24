@@ -4,7 +4,7 @@ namespace Market.Domain.Entities;
 
 public class ProductItem : EntityBase
 {
-    public long ProductId { get; set; }
+    public Guid ProductId { get; set; }
     public long Code { get; set; }
-    public long UserId { get; set; }
+    public Guid UserId { get; set; }
 }

@@ -15,7 +15,7 @@ public class ProductItemsController(IProductItemService productItemService) : Co
     [HttpPost]
     public async ValueTask<IActionResult> Create(ProductItemDTO productItemDTO)
     {
-        var userId = long.Parse(HttpContext.GetValueByClaimType("Id"));
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
         var result = await productItemService.CreateAsync(userId, productItemDTO);
 
         return result is not null
@@ -26,7 +26,7 @@ public class ProductItemsController(IProductItemService productItemService) : Co
     [HttpGet]
     public async ValueTask<IActionResult> GetAll()
     {
-        var userId = long.Parse(HttpContext.GetValueByClaimType("Id"));
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
         var result = await productItemService.GetAll(userId);
 
         return result is not null
@@ -34,8 +34,8 @@ public class ProductItemsController(IProductItemService productItemService) : Co
             : BadRequest(new Response(400, "Fail"));
     }
 
-    [HttpGet("{productItemId:long}")]
-    public async ValueTask<IActionResult> GetById([FromRoute] long productItemId)
+    [HttpGet("{productItemId}")]
+    public async ValueTask<IActionResult> GetById([FromRoute] Guid productItemId)
     {
         var result = await productItemService.GetByIdAsync(productItemId);
 
@@ -45,7 +45,7 @@ public class ProductItemsController(IProductItemService productItemService) : Co
     }
 
     [HttpPut]
-    public async ValueTask<IActionResult> Update(long productItemId, ProductItemDTO productItemDTO)
+    public async ValueTask<IActionResult> Update(Guid productItemId, ProductItemDTO productItemDTO)
     {
         var result = await productItemService.UpdateAsync(productItemId, productItemDTO);
 
@@ -54,8 +54,8 @@ public class ProductItemsController(IProductItemService productItemService) : Co
             : BadRequest(new Response(400, "Fail"));
     }
 
-    [HttpDelete("{productItemId:long}")]
-    public async ValueTask<IActionResult> DeleteById([FromRoute] long productItemId)
+    [HttpDelete("{productItemId}")]
+    public async ValueTask<IActionResult> DeleteById([FromRoute] Guid productItemId)
     {
         var result = await productItemService.DeleteByIdAsync(productItemId);
 

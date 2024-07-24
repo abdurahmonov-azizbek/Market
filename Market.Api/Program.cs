@@ -1,6 +1,7 @@
 using Market.Api.Middlewares;
 using Market.Application;
 using Market.Data.DbContexts;
+using Market.Domain.Enums;
 using Market.Domain.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -71,7 +72,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = jwtSettings.ValidAudience,
             ValidateLifetime = jwtSettings.ValidateLifeTime,
             ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+            RoleClaimType = nameof(Role)
         };
     }
 );

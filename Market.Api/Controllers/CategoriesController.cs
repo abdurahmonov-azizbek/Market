@@ -16,7 +16,7 @@ public class CategoriesController(ICategoryService categoryService) : Controller
     [HttpPost]
     public async ValueTask<IActionResult> Create(CategoryDTO categoryDTO)
     {
-        var result = await categoryService.CreateAsync(long.Parse(HttpContext.GetValueByClaimType("Id")), categoryDTO);
+        var result = await categoryService.CreateAsync(Guid.Parse(HttpContext.GetValueByClaimType("Id")), categoryDTO);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
@@ -26,7 +26,7 @@ public class CategoriesController(ICategoryService categoryService) : Controller
     [HttpGet]
     public async ValueTask<IActionResult> GetAll()
     {
-        var userId = long.Parse(HttpContext.GetValueByClaimType("Id"));
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
 
         var result = await categoryService.GetAllAsync(userId);
 
@@ -35,8 +35,8 @@ public class CategoriesController(ICategoryService categoryService) : Controller
             : BadRequest(new Response(400, "Fail"));
     }
 
-    [HttpGet("{categoryId:long}")]
-    public async ValueTask<IActionResult> GetById([FromRoute] long id)
+    [HttpGet("{categoryId}")]
+    public async ValueTask<IActionResult> GetById([FromRoute] Guid id)
     {
         var result = await categoryService.GetByIdAsync(id);
 
@@ -49,15 +49,15 @@ public class CategoriesController(ICategoryService categoryService) : Controller
     public async ValueTask<IActionResult> Update(CategoryDTO categoryDTO)
     {
         var result = await categoryService.UpdateAsync(
-            long.Parse(HttpContext.GetValueByClaimType("Id")), categoryDTO);
+            Guid.Parse(HttpContext.GetValueByClaimType("Id")), categoryDTO);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
             : BadRequest(new Response(400, "Fail"));
     }
 
-    [HttpDelete("{categoryId:long}")]
-    public async ValueTask<IActionResult> DeleteById([FromRoute] long categoryId)
+    [HttpDelete("{categoryId}")]
+    public async ValueTask<IActionResult> DeleteById([FromRoute] Guid categoryId)
     {
         var result = await categoryService.DeleteByIdAsync(categoryId);
 

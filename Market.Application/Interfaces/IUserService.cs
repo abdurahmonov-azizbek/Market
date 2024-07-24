@@ -7,7 +7,7 @@ public interface IUserService
 {
     ValueTask<User> CreateAsync(UserDTO userDTO);
     ValueTask<IQueryable<User>> GetAllAsync();
-    ValueTask<User> GetByIdAsync(long userId);
-    ValueTask<User> UpdateAsync(long userId, UserDTO userDTO);
-    ValueTask<User> DeleteById(long userId);
+    ValueTask<User> GetByIdAsync(Guid userId);
+    ValueTask<User> UpdateAsync(Guid userId, UserDTO userDTO);
+    ValueTask<User> DeleteById(Guid userId);
 }

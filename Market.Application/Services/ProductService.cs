@@ -8,11 +8,11 @@ namespace Market.Application.Services;
 
 public class ProductService(AppDbContext dbContext) : IProductService
 {
-    public async ValueTask<Product> CreateAsync(long userId, ProductDTO productDTO)
+    public async ValueTask<Product> CreateAsync(Guid userId, ProductDTO productDTO)
     {
         var product = new Product
         {
-            Id = dbContext.Products.Count() + 1,
+            Id = Guid.NewGuid(),
             Title = productDTO.Title,
             IncomingPrice = productDTO.IncomingPrice,
             SalePrice = productDTO.SalePrice,
@@ -28,7 +28,7 @@ public class ProductService(AppDbContext dbContext) : IProductService
         return product;
     }
 
-    public async ValueTask<Product> DeleteByIdAsync(long productId)
+    public async ValueTask<Product> DeleteByIdAsync(Guid productId)
     {
         var product = await dbContext.Products.FindAsync(productId)
             ?? throw new EntityNotFoundException(typeof(Product));
@@ -42,10 +42,10 @@ public class ProductService(AppDbContext dbContext) : IProductService
         return product;
     }
 
-    public ValueTask<IQueryable<Product>> GetAll(long userId)
+    public ValueTask<IQueryable<Product>> GetAll(Guid userId)
         => new(dbContext.Products.AsQueryable().Where(x => x.UserId == userId));
 
-    public async ValueTask<Product> GetByIdAsync(long productId)
+    public async ValueTask<Product> GetByIdAsync(Guid productId)
     {
         var product = await dbContext.Products.FindAsync(productId)
            ?? throw new EntityNotFoundException(typeof(Product));
@@ -53,7 +53,7 @@ public class ProductService(AppDbContext dbContext) : IProductService
         return product;
     }
 
-    public async ValueTask<Product> UpdateAsync(long productId, ProductDTO productDTO)
+    public async ValueTask<Product> UpdateAsync(Guid productId, ProductDTO productDTO)
     {
         var product = await dbContext.Products.FindAsync(productId)
            ?? throw new EntityNotFoundException(typeof(Product));

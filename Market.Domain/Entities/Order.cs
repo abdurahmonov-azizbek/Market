@@ -4,7 +4,7 @@ namespace Market.Domain.Entities;
 
 public class Order : EntityBase
 {
-    public long ProductItemId { get; set; }
+    public Guid ProductItemId { get; set; }
     public decimal Price { get; set; }
-    public long UserId { get; set; }
+    public Guid UserId { get; set; }
 }

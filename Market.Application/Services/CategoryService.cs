@@ -8,11 +8,11 @@ namespace Market.Application.Services;
 
 public class CategoryService(AppDbContext dbContext) : ICategoryService
 {
-    public async ValueTask<Category> CreateAsync(long userId, CategoryDTO categoryDTO)
+    public async ValueTask<Category> CreateAsync(Guid userId, CategoryDTO categoryDTO)
     {
         var category = new Category
         {
-            Id = dbContext.Categories.Count() + 1,
+            Id = Guid.NewGuid(),
             Title = categoryDTO.Title,
             UserId = userId,
             CreatedDate = DateTime.Now,
@@ -24,7 +24,7 @@ public class CategoryService(AppDbContext dbContext) : ICategoryService
         return category;
     }
 
-    public async ValueTask<Category> DeleteByIdAsync(long categoryId)
+    public async ValueTask<Category> DeleteByIdAsync(Guid categoryId)
     {
         var category = await dbContext.Categories.FindAsync(categoryId)
             ?? throw new EntityNotFoundException(typeof(Category));
@@ -38,10 +38,10 @@ public class CategoryService(AppDbContext dbContext) : ICategoryService
         return category;
     }
 
-    public ValueTask<IQueryable<Category>> GetAllAsync(long userId)
+    public ValueTask<IQueryable<Category>> GetAllAsync(Guid userId)
         => new(dbContext.Categories.AsQueryable().Where(category => category.UserId == userId));
 
-    public async ValueTask<Category> GetByIdAsync(long categoryId)
+    public async ValueTask<Category> GetByIdAsync(Guid categoryId)
     {
         var category = await dbContext.Categories.FindAsync(categoryId)
             ?? throw new EntityNotFoundException(typeof(Category));
@@ -49,7 +49,7 @@ public class CategoryService(AppDbContext dbContext) : ICategoryService
         return category;
     }
 
-    public async ValueTask<Category> UpdateAsync(long categoryId, CategoryDTO categoryDTO)
+    public async ValueTask<Category> UpdateAsync(Guid categoryId, CategoryDTO categoryDTO)
     {
         var category = await dbContext.Categories.FindAsync(categoryId)
             ?? throw new EntityNotFoundException(typeof(Category));

@@ -2,6 +2,6 @@
 
 public class OrderDTO
 {
-    public long ProductItemId { get; set; }
+    public Guid ProductItemId { get; set; }
     public decimal Price { get; set; }
 }

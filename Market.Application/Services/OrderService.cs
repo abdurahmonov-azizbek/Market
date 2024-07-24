@@ -9,24 +9,24 @@ namespace Market.Application.Services;
 
 public class OrderService(AppDbContext dbContext) : IOrderService
 {
-    public async ValueTask<Order> CreateAsync(long userId, OrderDTO orderDTO)
+    public async ValueTask<Order> CreateAsync(Guid userId, OrderDTO orderDTO)
     {
         var order = new Order
         {
-            Id = dbContext.Orders.Count() + 1,
+            Id = Guid.NewGuid(),
             ProductItemId = orderDTO.ProductItemId,
             Price = orderDTO.Price,
             UserId = userId,
             CreatedDate = DateTime.Now
         };
-
+            
         await dbContext.Orders.AddAsync(order);
         await dbContext.SaveChangesAsync();
 
         return order;
     }
 
-    public async ValueTask<Order> DeleteByIdAsync(long orderId)
+    public async ValueTask<Order> DeleteByIdAsync(Guid orderId)
     {
         var order = await dbContext.Orders.FindAsync(orderId)
             ?? throw new EntityNotFoundException(typeof(Order));
@@ -40,10 +40,10 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         return order;
     }
 
-    public ValueTask<IQueryable<Order>> GetAll(long userId)
+    public ValueTask<IQueryable<Order>> GetAll(Guid userId)
         => new(dbContext.Orders.AsQueryable().Where(x => x.UserId == userId));
 
-    public async ValueTask<Order> GetByIdAsync(long orderId)
+    public async ValueTask<Order> GetByIdAsync(Guid orderId)
     {
         var order = await dbContext.Orders.FindAsync(orderId)
            ?? throw new EntityNotFoundException(typeof(Order));
@@ -51,7 +51,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         return order;
     }
 
-    public async ValueTask<Order> UpdateAsync(long orderId, OrderDTO orderDTO)
+    public async ValueTask<Order> UpdateAsync(Guid orderId, OrderDTO orderDTO)
     {
         var order = await dbContext.Orders.FindAsync(orderId)
            ?? throw new EntityNotFoundException(typeof(Order));

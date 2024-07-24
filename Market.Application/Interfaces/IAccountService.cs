@@ -4,6 +4,6 @@ namespace Market.Application.Interfaces;
 
 public interface IAccountService
 {
-    ValueTask<bool> UpdatePasswordAsync(long userId, UpdatePasswordDetails updatePasswordDetails);
+    ValueTask<bool> UpdatePasswordAsync(Guid userId, UpdatePasswordDetails updatePasswordDetails);
     ValueTask<bool> GrandRoleAsync(GrandRoleDetails grandRoleDetails);
 }

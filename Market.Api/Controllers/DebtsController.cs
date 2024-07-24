@@ -15,7 +15,7 @@ public class DebtsController(IDebtService debtService) : ControllerBase
     [HttpPost]
     public async ValueTask<IActionResult> Create(DebtDTO debtDTO)
     {
-        var userId = long.Parse(HttpContext.GetServerVariable("Id")!);
+        var userId = Guid.Parse(HttpContext.GetServerVariable("Id")!);
         var result = await debtService.CreateAsync(userId, debtDTO);
 
         return result is not null
@@ -26,7 +26,7 @@ public class DebtsController(IDebtService debtService) : ControllerBase
     [HttpGet]
     public async ValueTask<IActionResult> GetAll()
     {
-        var userId = long.Parse(HttpContext.GetServerVariable("Id")!);
+        var userId = Guid.Parse(HttpContext.GetServerVariable("Id")!);
         var result = await debtService.GetAll(userId);
 
         return result is not null
@@ -34,8 +34,8 @@ public class DebtsController(IDebtService debtService) : ControllerBase
             : BadRequest(new Response(400, "Fail"));
     }
 
-    [HttpGet("{debtId:long}")]
-    public async ValueTask<IActionResult> GetById([FromRoute] long debtId)
+    [HttpGet("{debtId}")]
+    public async ValueTask<IActionResult> GetById([FromRoute] Guid debtId)
     {
         var result = await debtService.GetByIdAsync(debtId);
 
@@ -45,7 +45,7 @@ public class DebtsController(IDebtService debtService) : ControllerBase
     }
 
     [HttpPut]
-    public async ValueTask<IActionResult> Update(long debtId, DebtDTO debtDTO)
+    public async ValueTask<IActionResult> Update(Guid debtId, DebtDTO debtDTO)
     {
         var result = await debtService.UpdateAsync(debtId, debtDTO);
 
@@ -54,8 +54,8 @@ public class DebtsController(IDebtService debtService) : ControllerBase
             : BadRequest(new Response(400, "Fail"));
     }
 
-    [HttpDelete("{debtId:long}")]
-    public async ValueTask<IActionResult> DeleteById([FromRoute] long debtId)
+    [HttpDelete("{debtId}")]
+    public async ValueTask<IActionResult> DeleteById([FromRoute] Guid debtId)
     {
         var result = await debtService.DeleteByIdAsync(debtId);
 

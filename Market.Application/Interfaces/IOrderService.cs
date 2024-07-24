@@ -5,9 +5,9 @@ namespace Market.Application.Interfaces;
 
 public interface IOrderService
 {
-    ValueTask<Order> CreateAsync(long userId, OrderDTO orderDTO);
-    ValueTask<IQueryable<Order>> GetAll(long userId);
-    ValueTask<Order> GetByIdAsync(long orderId);
-    ValueTask<Order> UpdateAsync(long orderId, OrderDTO orderDTO);
-    ValueTask<Order> DeleteByIdAsync(long orderId);
+    ValueTask<Order> CreateAsync(Guid userId, OrderDTO orderDTO);
+    ValueTask<IQueryable<Order>> GetAll(Guid userId);
+    ValueTask<Order> GetByIdAsync(Guid orderId);
+    ValueTask<Order> UpdateAsync(Guid orderId, OrderDTO orderDTO);
+    ValueTask<Order> DeleteByIdAsync(Guid orderId);
 }

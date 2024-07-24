@@ -35,7 +35,7 @@ namespace Market.Application.Services
             return true;
         }
 
-        public async ValueTask<bool> UpdatePasswordAsync(long userId, UpdatePasswordDetails updatePasswordDetails)
+        public async ValueTask<bool> UpdatePasswordAsync(Guid userId, UpdatePasswordDetails updatePasswordDetails)
         {
             var user = await userService.GetByIdAsync(userId)
                 ?? throw new EntityNotFoundException(typeof(User));

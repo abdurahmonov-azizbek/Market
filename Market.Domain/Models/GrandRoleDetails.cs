@@ -4,8 +4,8 @@ namespace Market.Domain.Models
 {
     public class GrandRoleDetails
     {
-        public long FromUserId { get; set; }
-        public long ToUserId { get; set; }
+        public Guid FromUserId { get; set; }
+        public Guid ToUserId { get; set; }
         public Role Role { get; set; }
     }
 }

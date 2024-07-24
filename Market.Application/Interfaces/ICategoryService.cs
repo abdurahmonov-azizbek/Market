@@ -5,9 +5,9 @@ namespace Market.Application.Interfaces;
 
 public interface ICategoryService
 {
-    ValueTask<Category> CreateAsync(long userId, CategoryDTO categoryDTO);
-    ValueTask<IQueryable<Category>> GetAllAsync(long userId);
-    ValueTask<Category> GetByIdAsync(long categoryId);
-    ValueTask<Category> UpdateAsync(long categoryId, CategoryDTO categoryDTO);
-    ValueTask<Category> DeleteByIdAsync(long categoryId);
+    ValueTask<Category> CreateAsync(Guid userId, CategoryDTO categoryDTO);
+    ValueTask<IQueryable<Category>> GetAllAsync(Guid userId);
+    ValueTask<Category> GetByIdAsync(Guid categoryId);
+    ValueTask<Category> UpdateAsync(Guid categoryId, CategoryDTO categoryDTO);
+    ValueTask<Category> DeleteByIdAsync(Guid categoryId);
 }

@@ -8,11 +8,11 @@ namespace Market.Application.Services;
 
 public class DebtService(AppDbContext dbContext) : IDebtService
 {
-    public async ValueTask<Debt> CreateAsync(long userId, DebtDTO debtDTO)
+    public async ValueTask<Debt> CreateAsync(Guid userId, DebtDTO debtDTO)
     {
         var debt = new Debt
         {
-            Id = dbContext.Debts.Count() + 1,
+            Id = Guid.NewGuid(),
             Title = debtDTO.Title,
             Type = debtDTO.Type,
             Price = debtDTO.Price,
@@ -26,7 +26,7 @@ public class DebtService(AppDbContext dbContext) : IDebtService
         return debt;
     }
 
-    public async ValueTask<Debt> DeleteByIdAsync(long debtId)
+    public async ValueTask<Debt> DeleteByIdAsync(Guid debtId)
     {
         var debt = await dbContext.Debts.FindAsync(debtId)
             ?? throw new EntityNotFoundException(typeof(Debt));
@@ -40,10 +40,10 @@ public class DebtService(AppDbContext dbContext) : IDebtService
         return debt;
     }
 
-    public ValueTask<IQueryable<Debt>> GetAll(long userId)
+    public ValueTask<IQueryable<Debt>> GetAll(Guid userId)
         => new(dbContext.Debts.Where(debt => debt.UserId == userId));
 
-    public async ValueTask<Debt> GetByIdAsync(long debtId)
+    public async ValueTask<Debt> GetByIdAsync(Guid debtId)
     {
         var debt = await dbContext.Debts.FindAsync(debtId)
             ?? throw new EntityNotFoundException(typeof(Debt));
@@ -51,7 +51,7 @@ public class DebtService(AppDbContext dbContext) : IDebtService
         return debt;
     }
 
-    public async ValueTask<Debt> UpdateAsync(long debtId, DebtDTO debtDTO)
+    public async ValueTask<Debt> UpdateAsync(Guid debtId, DebtDTO debtDTO)
     {
         var debt = await dbContext.Debts.FindAsync(debtId)
             ?? throw new EntityNotFoundException(typeof(Debt));
@@ -59,6 +59,7 @@ public class DebtService(AppDbContext dbContext) : IDebtService
         debt.Title = debtDTO.Title;
         debt.Price = debtDTO.Price;
         debt.Type = debtDTO.Type;
+        debt.UpdatedDate = DateTime.Now;
 
         dbContext.Debts.Update(debt);
         await dbContext.SaveChangesAsync();

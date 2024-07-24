@@ -18,7 +18,7 @@ public class AccountsController(
     [Authorize]
     public async ValueTask<IActionResult> GetCurrentUser()
     {
-        var userId = long.Parse(HttpContext.GetValueByClaimType("Id"));
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
 
         var result = await userService.GetByIdAsync(userId);
 
@@ -31,7 +31,7 @@ public class AccountsController(
     [Authorize]
     public async ValueTask<IActionResult> UpdatePassword(UpdatePasswordDetails updatePasswordDetails)
     {
-        var userId = long.Parse(HttpContext.GetValueByClaimType("Id"));
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
 
         var result = await accountService.UpdatePasswordAsync(userId, updatePasswordDetails);
 
@@ -40,13 +40,13 @@ public class AccountsController(
             : BadRequest(new Response(400, "Fail", result));
     }
 
-    [HttpPut("users/{userId:long}/grand/role/{role}")]
+    [HttpPut("users/{userId}/grand/role/{role}")]
     [Authorize]
-    public async ValueTask<IActionResult> GrandRole([FromRoute] long userId, [FromRoute] Role role)
+    public async ValueTask<IActionResult> GrandRole([FromRoute] Guid userId, [FromRoute] Role role)
     {
         var result = await accountService.GrandRoleAsync(new GrandRoleDetails
         {
-            FromUserId = long.Parse(HttpContext.GetValueByClaimType("Id")),
+            FromUserId = Guid.Parse(HttpContext.GetValueByClaimType("Id")),
             ToUserId = userId,
             Role = role
         });

@@ -12,7 +12,7 @@ public class UserService(AppDbContext dbContext) : IUserService
     {
         var user = new User
         {
-            Id = dbContext.Users.Count() + 1,
+            Id = Guid.NewGuid(),
             FirstName = userDTO.FirstName,
             LastName = userDTO.LastName,
             Email = userDTO.Email,
@@ -27,7 +27,7 @@ public class UserService(AppDbContext dbContext) : IUserService
         return entityEntry.Entity;
     }
 
-    public async ValueTask<User> DeleteById(long userId)
+    public async ValueTask<User> DeleteById(Guid userId)
     {
         var user = await dbContext.Users.FindAsync(userId)
             ?? throw new EntityNotFoundException(typeof(User));
@@ -43,7 +43,7 @@ public class UserService(AppDbContext dbContext) : IUserService
     public ValueTask<IQueryable<User>> GetAllAsync()
         => new(dbContext.Users.AsQueryable());
 
-    public async ValueTask<User> GetByIdAsync(long userId)
+    public async ValueTask<User> GetByIdAsync(Guid userId)
     {
         var user = await dbContext.Users.FindAsync(userId)
             ?? throw new EntityNotFoundException(typeof(User));
@@ -51,7 +51,7 @@ public class UserService(AppDbContext dbContext) : IUserService
         return user;
     }
 
-    public async ValueTask<User> UpdateAsync(long userId, UserDTO userDTO)
+    public async ValueTask<User> UpdateAsync(Guid userId, UserDTO userDTO)
     {
         var user = await dbContext.Users.FindAsync(userId)
            ?? throw new EntityNotFoundException(typeof(User));

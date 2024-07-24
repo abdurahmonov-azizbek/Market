@@ -14,7 +14,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [HttpPost]
     public async ValueTask<IActionResult> Create(OrderDTO orderDTO)
     {
-        var userId = long.Parse(HttpContext.GetServerVariable("Id")!);
+        var userId = Guid.Parse(HttpContext.GetServerVariable("Id")!);
         var result = await orderService.CreateAsync(userId, orderDTO);
 
         return result is not null
@@ -25,7 +25,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     [HttpGet]
     public async ValueTask<IActionResult> GetAll()
     {
-        var userId = long.Parse(HttpContext.GetServerVariable("Id")!);
+        var userId = Guid.Parse(HttpContext.GetServerVariable("Id")!);
         var result = await orderService.GetAll(userId);
 
         return result is not null
@@ -33,8 +33,8 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             : BadRequest(new Response(400, "Fail"));
     }
 
-    [HttpGet("{orderId:long}")]
-    public async ValueTask<IActionResult> GetById([FromRoute] long orderId)
+    [HttpGet("{orderId}")]
+    public async ValueTask<IActionResult> GetById([FromRoute] Guid orderId)
     {
         var result = await orderService.GetByIdAsync(orderId);
 
@@ -44,7 +44,7 @@ public class OrdersController(IOrderService orderService) : ControllerBase
     }
 
     [HttpPut]
-    public async ValueTask<IActionResult> Update(long orderId, OrderDTO orderDTO)
+    public async ValueTask<IActionResult> Update(Guid orderId, OrderDTO orderDTO)
     {
         var result = await orderService.UpdateAsync(orderId, orderDTO);
 
@@ -53,8 +53,8 @@ public class OrdersController(IOrderService orderService) : ControllerBase
             : BadRequest(new Response(400, "Fail"));
     }
 
-    [HttpDelete("{orderId:long}")]
-    public async ValueTask<IActionResult> DeleteById([FromRoute] long orderId)
+    [HttpDelete("{orderId}")]
+    public async ValueTask<IActionResult> DeleteById([FromRoute] Guid orderId)
     {
         var result = await orderService.DeleteByIdAsync(orderId);
 

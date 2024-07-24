@@ -5,9 +5,9 @@ namespace Market.Application.Interfaces;
 
 public interface IProductService
 {
-    ValueTask<Product> CreateAsync(long userId, ProductDTO productDTO);
-    ValueTask<IQueryable<Product>> GetAll(long userId);
-    ValueTask<Product> GetByIdAsync(long productId);
-    ValueTask<Product> UpdateAsync(long productId, ProductDTO productDTO);
-    ValueTask<Product> DeleteByIdAsync(long productId);
+    ValueTask<Product> CreateAsync(Guid userId, ProductDTO productDTO);
+    ValueTask<IQueryable<Product>> GetAll(Guid userId);
+    ValueTask<Product> GetByIdAsync(Guid productId);
+    ValueTask<Product> UpdateAsync(Guid productId, ProductDTO productDTO);
+    ValueTask<Product> DeleteByIdAsync(Guid productId);
 }

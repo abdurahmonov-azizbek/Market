@@ -8,11 +8,11 @@ namespace Market.Application.Services;
 
 public class ProductItemService(AppDbContext dbContext) : IProductItemService
 {
-    public async ValueTask<ProductItem> CreateAsync(long userId, ProductItemDTO productItemDTO)
+    public async ValueTask<ProductItem> CreateAsync(Guid userId, ProductItemDTO productItemDTO)
     {
         var productItem = new ProductItem
         {
-            Id = dbContext.ProductItems.Count() + 1,
+            Id = Guid.NewGuid(),
             ProductId = productItemDTO.ProductId,
             Code = productItemDTO.Code,
             UserId = userId,
@@ -25,7 +25,7 @@ public class ProductItemService(AppDbContext dbContext) : IProductItemService
         return productItem;
     }
 
-    public async ValueTask<ProductItem> DeleteByIdAsync(long productItemId)
+    public async ValueTask<ProductItem> DeleteByIdAsync(Guid productItemId)
     {
         var productItem = await dbContext.ProductItems.FindAsync(productItemId)
             ?? throw new EntityNotFoundException(typeof(ProductItem));
@@ -39,10 +39,10 @@ public class ProductItemService(AppDbContext dbContext) : IProductItemService
         return productItem;
     }
 
-    public ValueTask<IQueryable<ProductItem>> GetAll(long userId)
+    public ValueTask<IQueryable<ProductItem>> GetAll(Guid userId)
          => new(dbContext.ProductItems.AsQueryable().Where(x => x.UserId == userId));
 
-    public async ValueTask<ProductItem> GetByIdAsync(long productItemId)
+    public async ValueTask<ProductItem> GetByIdAsync(Guid productItemId)
     {
         var productItem = await dbContext.ProductItems.FindAsync(productItemId)
             ?? throw new EntityNotFoundException(typeof(ProductItem));
@@ -50,7 +50,7 @@ public class ProductItemService(AppDbContext dbContext) : IProductItemService
         return productItem;
     }
 
-    public async ValueTask<ProductItem> UpdateAsync(long productItemId, ProductItemDTO productItemDTO)
+    public async ValueTask<ProductItem> UpdateAsync(Guid productItemId, ProductItemDTO productItemDTO)
     {
         var productItem = await dbContext.ProductItems.FindAsync(productItemId)
             ?? throw new EntityNotFoundException(typeof(ProductItem));

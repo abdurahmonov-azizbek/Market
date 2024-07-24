@@ -10,8 +10,11 @@ namespace Market.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(IAuthService authService, IPasswordHasherService passwordHasherService) : ControllerBase
 {
+    [HttpGet("hash")]
+    public IActionResult Hash(string text) => Ok(passwordHasherService.Hash(text));
+
     [HttpPost("sign-up")]
     public async ValueTask<IActionResult> SignUp([FromBody] RegisterDetails registerDetails)
     {
@@ -22,7 +25,7 @@ public class AuthController(IAuthService authService) : ControllerBase
             : BadRequest(new Response(400, "Fail", result));
     }
 
-    [HttpGet]
+    [HttpGet("sign-in")]
     public async ValueTask<IActionResult> SignIn([FromQuery] LoginDetails loginDetails)
     {
         var result = await authService.LoginAsync(loginDetails);
