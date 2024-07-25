@@ -43,7 +43,7 @@ public class UserService(AppDbContext dbContext) : IUserService
     }
 
     public ValueTask<IQueryable<User>> GetAllAsync(Guid userId)
-        => new(dbContext.Users.AsQueryable().Where(x => x.Id == userId));
+        => new(dbContext.Users.AsQueryable().Where(x => x.CreatedBy == userId));
 
     public async ValueTask<User> GetByIdAsync(Guid userId)
     {

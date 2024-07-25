@@ -12,12 +12,13 @@ namespace Market.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = nameof(Role.SuperAdmin))]
 public class ProductItemsController(
     IProductItemService productItemService,
-    IProductService productService) : ControllerBase
+    IProductService productService,
+    IUserService userService) : ControllerBase
 {
     [HttpGet("get-by-code/{code:long}")]
+    [Authorize(Roles = nameof(Role.SuperAdmin))]
     public async ValueTask<IActionResult> GetByCode([FromRoute] long code)
     {
         var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
@@ -38,6 +39,7 @@ public class ProductItemsController(
     }
 
     [HttpGet("get-by-key/{key}")]
+    [Authorize(Roles = nameof(Role.SuperAdmin))]
     public async ValueTask<IActionResult> GetByCode([FromRoute] string key)
     {
         if (string.IsNullOrWhiteSpace(key))
@@ -85,6 +87,7 @@ public class ProductItemsController(
     }
 
     [HttpPost]
+    [Authorize(Roles = nameof(Role.SuperAdmin))]
     public async ValueTask<IActionResult> Create(ProductItemDTO productItemDTO)
     {
         var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
@@ -96,17 +99,39 @@ public class ProductItemsController(
     }
 
     [HttpGet]
+    [Authorize]
     public async ValueTask<IActionResult> GetAll()
     {
         var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
-        var result = await productItemService.GetAll(userId);
+        var role = HttpContext.GetValueByClaimType("Role");
 
-        return result is not null
-            ? Ok(new Response(200, "Success", result))
-            : BadRequest(new Response(400, "Fail"));
+        if (role == nameof(Role.SuperAdmin))
+        {
+            var result = await productItemService.GetAll(userId);
+
+            return result is not null
+                ? Ok(new Response(200, "Success", result))
+                : BadRequest(new Response(400, "Fail"));
+        }
+        else if (role == nameof(Role.Admin))
+        {
+            var user = await userService.GetByIdAsync(userId)
+                ?? throw new EntityNotFoundException(typeof(User));
+
+            var result = await productItemService.GetAll(user.CreatedBy);
+
+            return result is not null
+              ? Ok(new Response(200, "Success", result))
+              : BadRequest(new Response(400, "Fail"));
+        }
+        else
+        {
+            return BadRequest();
+        }
     }
 
     [HttpGet("{productItemId}")]
+    [Authorize]
     public async ValueTask<IActionResult> GetById([FromRoute] Guid productItemId)
     {
         var result = await productItemService.GetByIdAsync(productItemId);
@@ -117,6 +142,7 @@ public class ProductItemsController(
     }
 
     [HttpPut]
+    [Authorize(Roles = nameof(Role.SuperAdmin))]
     public async ValueTask<IActionResult> Update(Guid productItemId, ProductItemDTO productItemDTO)
     {
         var result = await productItemService.UpdateAsync(productItemId, productItemDTO);
@@ -127,6 +153,7 @@ public class ProductItemsController(
     }
 
     [HttpDelete("{productItemId}")]
+    [Authorize(Roles = nameof(Role.SuperAdmin))]
     public async ValueTask<IActionResult> DeleteById([FromRoute] Guid productItemId)
     {
         var result = await productItemService.DeleteByIdAsync(productItemId);

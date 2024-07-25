@@ -2,6 +2,7 @@
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
 using Market.Domain.Models;
+using System.Data;
 
 namespace Market.Application.Services;
 
@@ -15,15 +16,29 @@ public class StatisticService(
     public async ValueTask<Statistics> Get(Guid userId, DateTime dateTime)
     {
         var date = dateTime.Date;
-
         var admins = await userService.GetAllAsync(userId);
-
         var orders = new List<Order>();
 
-        foreach (var admin in admins)
-            orders.AddRange((await orderService.GetAll(admin.Id)).Where(x => x.CreatedDate.Date == date));
+        //add current user's orders to orders collection
+        var currentUsersOrders = await orderService.GetAll(userId);
+        foreach (var order in currentUsersOrders)
+        {
+            if (order.CreatedDate.Date == date)
+                orders.Add(order);
+        }
 
-        orders.AddRange((await orderService.GetAll(userId)).Where(x => x.CreatedDate.Date == date));
+        //add users' admins' orders
+        foreach (var admin in admins)
+        {
+            var adminOrders = await orderService.GetAll(admin.Id);
+            foreach (var order in orders)
+            {
+                if (order.CreatedDate.Date == date)
+                {
+                    orders.Add(order);
+                }
+            }
+        }
 
         var ordersCount = orders.Count();
 
@@ -42,14 +57,27 @@ public class StatisticService(
             profit += product.SalePrice - product.IncomingPrice;
         }
 
-        var debts = (await debtService.GetAll(userId))
-            .Where(d => d.CreatedDate.Date == date);
+        var debts = await debtService.GetAll(userId);
+        var foundDebts = debts.ToList().Where(debt =>
+        {
+            if (debt.CreatedDate.Year == date.Year &&
+                debt.CreatedDate.Month == date.Month &&
+                debt.CreatedDate.Day == date.Day)
+            {
+                return true;
+            }
+
+            return false;
+        });
 
         int costs = 0;
         int debtsB = 0;
 
-        foreach (var debt in debts)
+        foreach (var debt in foundDebts)
         {
+            if (debt is null)
+                continue;
+
             if (debt.Type == Domain.Enums.DebtType.Company)
             {
                 costs += Convert.ToInt32(debt.Price);

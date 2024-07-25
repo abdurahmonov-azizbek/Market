@@ -1,4 +1,5 @@
-﻿using Market.Api.Models;
+﻿using Market.Api.Extensions;
+using Market.Api.Models;
 using Market.Application.Interfaces;
 using Market.Application.Services;
 using Market.Domain.DTOs;
@@ -14,9 +15,9 @@ namespace Market.Api.Controllers;
 public class DebtsController(IDebtService debtService) : ControllerBase
 {
     [HttpPost]
-    public async ValueTask<IActionResult> Create(DebtDTO debtDTO)
+    public async ValueTask<IActionResult> Create([FromBody] DebtDTO debtDTO)
     {
-        var userId = Guid.Parse(HttpContext.GetServerVariable("Id")!);
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id")!);
         var result = await debtService.CreateAsync(userId, debtDTO);
 
         return result is not null

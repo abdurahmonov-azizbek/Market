@@ -13,9 +13,11 @@ namespace Market.Api.Controllers;
 public class StatisticsController(IStatisticService statisticService) : ControllerBase
 {
     [HttpGet]
-    public async ValueTask<IActionResult> Get(DateTime dateTime)
+    public async ValueTask<IActionResult> Get(int year, int month, int day)
     {
         var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
+
+        var dateTime = new DateTime(year, month, day);
         var result = await statisticService.Get(userId, dateTime);
 
         return result is not null
