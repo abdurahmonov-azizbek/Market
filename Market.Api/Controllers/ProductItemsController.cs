@@ -25,7 +25,7 @@ public class ProductItemsController(
             .FirstOrDefault(x => x.Code == code)
                 ?? throw new EntityNotFoundException(typeof(ProductItem));
 
-        var product = await productService.GetByIdAsync(productItem.Id)
+        var product = await productService.GetByIdAsync(productItem.ProductId)
             ?? throw new EntityNotFoundException(typeof(Product));
 
         var fullProduct = new FullProduct
@@ -40,17 +40,37 @@ public class ProductItemsController(
     [HttpGet("get-by-key/{key}")]
     public async ValueTask<IActionResult> GetByCode([FromRoute] string key)
     {
+        if (string.IsNullOrWhiteSpace(key))
+            throw new InvalidOperationException("Key can't be empty!");
+
         var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
-        var productItems = (await productItemService.GetAll(userId))
-            .Where(x => x.Title.Contains(key, StringComparison.OrdinalIgnoreCase))
-                ?? throw new EntityNotFoundException(typeof(ProductItem));
+
+        var productItems = (await productItemService.GetAll(userId)).ToList();
+
+        var foundProductItems = productItems.Where(x =>
+            {
+                if (string.IsNullOrWhiteSpace(x.Title))
+                    return false;
+
+                if (!x.Title.Contains(key, StringComparison.OrdinalIgnoreCase))
+                    return false;
+
+                return true;
+            });
 
         var result = new List<FullProduct>();
 
-        foreach (var productItem in productItems)
+        foreach (var productItem in foundProductItems)
         {
-            var product = await productService.GetByIdAsync(productItem.Id)
-                ?? throw new EntityNotFoundException(typeof(Product));
+            Product product = null as Product;
+            try
+            {
+                product = await productService.GetByIdAsync(productItem.ProductId);
+            }
+            catch
+            {
+                product = null;
+            }
 
             var fullProduct = new FullProduct
             {
