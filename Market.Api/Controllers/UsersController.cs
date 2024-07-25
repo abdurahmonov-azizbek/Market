@@ -13,7 +13,9 @@ namespace Market.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Roles = "System,SuperAdmin")]
-public class UsersController(IUserService userService) : ControllerBase
+public class UsersController(
+    IUserService userService,
+    IPasswordHasherService passwordHasherService) : ControllerBase
 {
     [HttpPost]
     public async ValueTask<IActionResult> Create(UserDTO userDTO)
@@ -30,6 +32,7 @@ public class UsersController(IUserService userService) : ControllerBase
         if (creatorUserRole == "SuperAdmin" && userDTO.Role != Role.Admin)
             throw new InvalidOperationException("You can create only admins!");
 
+        userDTO.Password = passwordHasherService.Hash(userDTO.Password);
         var result = await userService.CreateAsync(creatorUserId, userDTO);
 
         return result is not null
