@@ -11,13 +11,14 @@ public class ProductService(AppDbContext dbContext) : IProductService
 {
     public async ValueTask<Product> CreateAsync(Guid userId, ProductDTO productDTO)
     {
+        var percent = (productDTO.SalePrice - productDTO.IncomingPrice) / (float)productDTO.IncomingPrice * 100;
         var product = new Product
         {
             Id = Guid.NewGuid(),
             Title = productDTO.Title,
             IncomingPrice = productDTO.IncomingPrice,
             SalePrice = productDTO.SalePrice,
-            Percent = ((productDTO.SalePrice - productDTO.IncomingPrice) / productDTO.IncomingPrice) * 100,
+            Percent = (int)percent,
             UserId = userId,
             CategoryId = productDTO.CategoryId,
             CreatedDate = Helper.GetCurrentDateTime()
