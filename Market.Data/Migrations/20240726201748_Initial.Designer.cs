@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Market.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240724192109_Initial")]
+    [Migration("20240726201748_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -70,6 +70,10 @@ namespace Market.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("PaybackTime")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
@@ -97,6 +101,12 @@ namespace Market.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<long>("Code")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -109,8 +119,11 @@ namespace Market.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid>("ProductItemId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -131,6 +144,12 @@ namespace Market.Data.Migrations
 
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
+
+                    b.Property<long>("Code")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -165,10 +184,13 @@ namespace Market.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Market.Domain.Entities.ProductItem", b =>
+            modelBuilder.Entity("Market.Domain.Entities.ReturnedProduct", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<long>("Code")
@@ -183,9 +205,6 @@ namespace Market.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
@@ -197,7 +216,7 @@ namespace Market.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductItems");
+                    b.ToTable("ReturnedProducts");
                 });
 
             modelBuilder.Entity("Market.Domain.Entities.User", b =>

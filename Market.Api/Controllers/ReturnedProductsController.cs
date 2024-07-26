@@ -2,6 +2,7 @@
 using Market.Application.Interfaces;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
+using Market.Domain.Enums;
 using Market.Domain.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +12,15 @@ namespace Market.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Roles = "SuperAdmin,Admin")]
-public class OrdersController(
-    IOrderService orderService,
+public class ReturnedProductsController(
+    IReturnedProductService returnedProductService,
     IUserService userService) : ControllerBase
 {
     [HttpPost]
-    public async ValueTask<IActionResult> Create(OrderDTO orderDTO)
+    public async ValueTask<IActionResult> Create(ReturnedProductDTO returnedProductDTO)
     {
-        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id")!);
-        var result = await orderService.CreateAsync(userId, orderDTO);
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
+        var result = await returnedProductService.CreateAsync(userId, returnedProductDTO);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
@@ -29,12 +30,12 @@ public class OrdersController(
     [HttpGet]
     public async ValueTask<IActionResult> GetAll()
     {
-        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id")!);
-        var currentUserRole = HttpContext.GetValueByClaimType("Role");
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
 
-        if (currentUserRole == "Admin")
+        var role = HttpContext.GetValueByClaimType("Role");
+        if (role == nameof(Role.Admin))
         {
-            var result = await orderService.GetAll(userId);
+            var result = await returnedProductService.GetAllAsync(userId);
 
             return result is not null
                 ? Ok(new Response(200, "Success", result))
@@ -42,18 +43,14 @@ public class OrdersController(
         }
         else
         {
-            var admins = await userService.GetAllAsync(userId);
+            var result = new List<ReturnedProduct>();
 
-            var result = new List<Order>();
+            var admins = (await userService.GetAllAsync(userId)).ToList();
             foreach (var admin in admins)
             {
-                var adminOrders = await orderService.GetAll(admin.Id);
-
-                if (adminOrders is not null)
-                    result.AddRange(adminOrders);
+                var entities = await returnedProductService.GetAllAsync(admin.Id);
+                result.AddRange(entities);
             }
-
-            result.AddRange(await orderService.GetAll(userId));
 
             return result is not null
                 ? Ok(new Response(200, "Success", result))
@@ -61,10 +58,10 @@ public class OrdersController(
         }
     }
 
-    [HttpGet("{orderId}")]
-    public async ValueTask<IActionResult> GetById([FromRoute] Guid orderId)
+    [HttpGet("{id:guid}")]
+    public async ValueTask<IActionResult> GetById(Guid id)
     {
-        var result = await orderService.GetByIdAsync(orderId);
+        var result = await returnedProductService.GetByIdAsync(id);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
@@ -72,19 +69,19 @@ public class OrdersController(
     }
 
     [HttpPut]
-    public async ValueTask<IActionResult> Update(Guid orderId, OrderDTO orderDTO)
+    public async ValueTask<IActionResult> Update(Guid id, ReturnedProductDTO returnedProductDTO)
     {
-        var result = await orderService.UpdateAsync(orderId, orderDTO);
+        var result = await returnedProductService.UpdateAsync(id, returnedProductDTO);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
             : BadRequest(new Response(400, "Fail"));
     }
 
-    [HttpDelete("{orderId}")]
-    public async ValueTask<IActionResult> DeleteById([FromRoute] Guid orderId)
+    [HttpDelete("{id:guid}")]
+    public async ValueTask<IActionResult> DeleteById([FromRoute] Guid id)
     {
-        var result = await orderService.DeleteByIdAsync(orderId);
+        var result = await returnedProductService.DeleteByIdAsync(id);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))

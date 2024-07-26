@@ -15,7 +15,10 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         var order = new Order
         {
             Id = Guid.NewGuid(),
-            ProductItemId = orderDTO.ProductItemId,
+            ProductId = orderDTO.ProductId,
+            Code = orderDTO.Code,
+            Title = orderDTO.Title,
+            Count = orderDTO.Count,
             Price = orderDTO.Price,
             UserId = userId,
             CreatedDate = Helper.GetCurrentDateTime()
@@ -57,7 +60,10 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         var order = await dbContext.Orders.FindAsync(orderId)
            ?? throw new EntityNotFoundException(typeof(Order));
 
-        order.ProductItemId = orderDTO.ProductItemId;
+        order.ProductId = orderDTO.ProductId;
+        order.Count = orderDTO.Count;
+        order.Code = orderDTO.Code;
+        order.Title = orderDTO.Title;
         order.Price = orderDTO.Price;
         order.UpdatedDate = Helper.GetCurrentDateTime();
 

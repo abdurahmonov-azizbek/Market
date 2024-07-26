@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<Debt> Debts { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<ProductItem> ProductItems { get; set; }
+    public DbSet<ReturnedProduct> ReturnedProducts { get; set; }
 
     public AppDbContext(DbContextOptions options) : base(options)
     {
@@ -23,8 +23,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Category>().HasQueryFilter(category => !category.IsDeleted);
         modelBuilder.Entity<Order>().HasQueryFilter(order => !order.IsDeleted);
         modelBuilder.Entity<Product>().HasQueryFilter(product => !product.IsDeleted);
-        modelBuilder.Entity<ProductItem>().HasQueryFilter(productItem => !productItem.IsDeleted);
         modelBuilder.Entity<Debt>().HasQueryFilter(debt => !debt.IsDeleted);
+        modelBuilder.Entity<ReturnedProduct>().HasQueryFilter(returned => !returned.IsDeleted);
 
         modelBuilder.Entity<User>().HasData(
             new User

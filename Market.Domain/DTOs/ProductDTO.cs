@@ -5,5 +5,7 @@ public class ProductDTO
     public string Title { get; set; } = default!;
     public int IncomingPrice { get; set; }
     public int SalePrice { get; set; }
+    public int Count { get; set; }
+    public long Code { get; set; }
     public Guid CategoryId { get; set; }
 }

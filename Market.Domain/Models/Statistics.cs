@@ -3,8 +3,8 @@
 public class Statistics
 {
     public int Orders { get; set; }
-    public int Total { get; set; }
+    public decimal Total { get; set; }
     public int Profit { get; set; } 
-    public int Costs { get; set; }
-    public int Debts { get; set; }
+    public decimal Costs { get; set; }
+    public decimal Debts { get; set; }
 }

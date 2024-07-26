@@ -8,6 +8,8 @@ public class Product : EntityBase
     public int IncomingPrice { get; set; }
     public int SalePrice { get; set; }
     public int Percent { get; set; }
+    public int Count { get; set; }
+    public long Code { get; set; }
     public Guid UserId { get; set; }
     public Guid CategoryId { get; set; }
 }

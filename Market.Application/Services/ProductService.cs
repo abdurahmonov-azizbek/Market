@@ -11,6 +11,9 @@ public class ProductService(AppDbContext dbContext) : IProductService
 {
     public async ValueTask<Product> CreateAsync(Guid userId, ProductDTO productDTO)
     {
+        if (dbContext.Products.Any(product => product.Code == productDTO.Code))
+            throw new InvalidOperationException("Product already exists with this code!");
+
         var percent = (productDTO.SalePrice - productDTO.IncomingPrice) / (float)productDTO.IncomingPrice * 100;
         var product = new Product
         {
@@ -19,6 +22,8 @@ public class ProductService(AppDbContext dbContext) : IProductService
             IncomingPrice = productDTO.IncomingPrice,
             SalePrice = productDTO.SalePrice,
             Percent = (int)percent,
+            Count = productDTO.Count,
+            Code = productDTO.Code,
             UserId = userId,
             CategoryId = productDTO.CategoryId,
             CreatedDate = Helper.GetCurrentDateTime()
@@ -60,11 +65,16 @@ public class ProductService(AppDbContext dbContext) : IProductService
         var product = await dbContext.Products.FindAsync(productId)
            ?? throw new EntityNotFoundException(typeof(Product));
 
+        if (productDTO.Count < 0)
+            throw new InvalidOperationException("Count must be positive!");
+
         product.Title = productDTO.Title;
         product.IncomingPrice = productDTO.IncomingPrice;
         product.SalePrice = productDTO.SalePrice;
         product.Percent = ((productDTO.SalePrice - productDTO.IncomingPrice) / productDTO.IncomingPrice) * 100;
         product.CategoryId = productDTO.CategoryId;
+        product.Code = productDTO.Code;
+        product.Count = productDTO.Count;
         product.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.Products.Update(product);

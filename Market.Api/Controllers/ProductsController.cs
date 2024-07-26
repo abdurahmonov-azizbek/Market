@@ -71,7 +71,7 @@ public class ProductsController(
     }
 
     [HttpPut]
-    [Authorize(Roles = nameof(Role.SuperAdmin))]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public async ValueTask<IActionResult> Update(Guid productId, ProductDTO productDTO)
     {
         var result = await productService.UpdateAsync(productId, productDTO);
@@ -82,7 +82,7 @@ public class ProductsController(
     }
 
     [HttpDelete("{productId}")]
-    [Authorize(Roles = nameof(Role.SuperAdmin))]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public async ValueTask<IActionResult> DeleteById([FromRoute] Guid productId)
     {
         var result = await productService.DeleteByIdAsync(productId);

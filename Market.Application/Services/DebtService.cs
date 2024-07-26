@@ -18,6 +18,7 @@ public class DebtService(AppDbContext dbContext) : IDebtService
             Type = debtDTO.Type,
             Price = debtDTO.Price,
             UserId = userId,
+            PaybackTime = debtDTO.PaybackTime,
             CreatedDate = Helper.GetCurrentDateTime()
         };
 
@@ -60,6 +61,7 @@ public class DebtService(AppDbContext dbContext) : IDebtService
         debt.Title = debtDTO.Title;
         debt.Price = debtDTO.Price;
         debt.Type = debtDTO.Type;
+        debt.PaybackTime = debtDTO.PaybackTime;
         debt.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.Debts.Update(debt);

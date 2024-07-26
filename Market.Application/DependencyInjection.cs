@@ -13,14 +13,13 @@ public static class DependencyInjection
             .AddScoped<ICategoryService, CategoryService>()
             .AddScoped<IOrderService, OrderService>()
             .AddScoped<IProductService, ProductService>()
-            .AddScoped<IProductItemService, ProductItemService>()
             .AddScoped<IPasswordHasherService, PasswordHasherService>()
             .AddScoped<ITokenService, TokenService>()
             .AddScoped<IAuthService, AuthService>()
             .AddScoped<IAccountService, AccountService>()
             .AddScoped<IDebtService, DebtService>()
-            .AddScoped<IStatisticService, StatisticService>()
-            .AddScoped<IProductOrchestrationService, ProductOrchestrationService>();
+            .AddScoped<IReturnedProductService, ReturnedProductService>()
+            .AddScoped<IStatisticService, StatisticService>();
 
         return services;
     }
