@@ -46,10 +46,9 @@ public class CategoriesController(ICategoryService categoryService) : Controller
     }
 
     [HttpPut]
-    public async ValueTask<IActionResult> Update(CategoryDTO categoryDTO)
+    public async ValueTask<IActionResult> Update(Guid id, CategoryDTO categoryDTO)
     {
-        var result = await categoryService.UpdateAsync(
-            Guid.Parse(HttpContext.GetValueByClaimType("Id")), categoryDTO);
+        var result = await categoryService.UpdateAsync(id, categoryDTO);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
