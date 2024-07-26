@@ -3,7 +3,8 @@ using Market.Data.DbContexts;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
-using Market.Domain.Extensions;
+using Market.Domain.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Market.Application.Services;
 
@@ -11,6 +12,9 @@ public class UserService(AppDbContext dbContext) : IUserService
 {
     public async ValueTask<User> CreateAsync(Guid createdBy, UserDTO userDTO)
     {
+        if (dbContext.Users.Any(user => user.Email == userDTO.Email))
+            throw new InvalidOperationException("User already exists with this email!");
+
         var user = new User
         {
             Id = Guid.NewGuid(),

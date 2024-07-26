@@ -25,6 +25,9 @@ builder.Services.AddServices();
 builder.Services.AddControllers();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
+//Add context accessor
+builder.Services.AddHttpContextAccessor();
+
 //Swagger configuration
 builder.Services.AddEndpointsApiExplorer();
 

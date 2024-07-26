@@ -1,10 +1,10 @@
-﻿using Market.Api.Extensions;
-using Market.Api.Models;
+﻿using Market.Api.Models;
 using Market.Application.Interfaces;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Enums;
 using Market.Domain.Exceptions;
+using Market.Domain.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +20,9 @@ public class UsersController(
     [HttpPost]
     public async ValueTask<IActionResult> Create(UserDTO userDTO)
     {
+        if (userDTO.Password.Length is < 8 or > 32)
+            throw new InvalidOperationException("Password must be between 8 and 32!");
+
         var creatorUserRole = HttpContext.GetValueByClaimType("Role");
         var creatorUserId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
 

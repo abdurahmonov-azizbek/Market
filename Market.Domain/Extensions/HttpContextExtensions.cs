@@ -1,4 +1,6 @@
-﻿namespace Market.Api.Extensions
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Market.Domain.Extensions
 {
     public static class HttpContextExtensions
     {

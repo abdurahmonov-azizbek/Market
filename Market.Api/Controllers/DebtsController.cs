@@ -1,9 +1,9 @@
-﻿using Market.Api.Extensions;
-using Market.Api.Models;
+﻿using Market.Api.Models;
 using Market.Application.Interfaces;
 using Market.Application.Services;
 using Market.Domain.DTOs;
 using Market.Domain.Enums;
+using Market.Domain.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

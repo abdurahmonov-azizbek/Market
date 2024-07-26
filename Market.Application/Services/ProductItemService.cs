@@ -3,7 +3,7 @@ using Market.Data.DbContexts;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
-using Market.Domain.Extensions;
+using Market.Domain.Helpers;
 
 namespace Market.Application.Services;
 

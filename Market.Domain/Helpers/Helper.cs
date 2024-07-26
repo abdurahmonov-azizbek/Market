@@ -1,4 +1,4 @@
-﻿namespace Market.Domain.Extensions;
+﻿namespace Market.Domain.Helpers;
 
 public static class Helper
 {

@@ -1,10 +1,10 @@
-﻿using Market.Api.Extensions;
-using Market.Api.Models;
+﻿using Market.Api.Models;
 using Market.Application.Interfaces;
 using Market.Domain.DTOs;
 using Market.Domain.Entities;
 using Market.Domain.Enums;
 using Market.Domain.Exceptions;
+using Market.Domain.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,75 +15,27 @@ namespace Market.Api.Controllers;
 public class ProductItemsController(
     IProductItemService productItemService,
     IProductService productService,
-    IUserService userService) : ControllerBase
+    IUserService userService,
+    IProductOrchestrationService productOrchestrationService) : ControllerBase
 {
     [HttpGet("get-by-code/{code:long}")]
-    [Authorize(Roles = nameof(Role.SuperAdmin))]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public async ValueTask<IActionResult> GetByCode([FromRoute] long code)
     {
-        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
-        var productItem = (await productItemService.GetAll(userId))
-            .FirstOrDefault(x => x.Code == code)
-                ?? throw new EntityNotFoundException(typeof(ProductItem));
+        var result = await productOrchestrationService.GetByCodeAsync(code);
 
-        var product = await productService.GetByIdAsync(productItem.ProductId)
-            ?? throw new EntityNotFoundException(typeof(Product));
-
-        var fullProduct = new FullProduct
-        {
-            Product = product,
-            ProductItem = productItem
-        };
-
-        return Ok(new Response(200, "Success", fullProduct));
+        return result is not null
+            ? Ok(new Response(200, "Success", result))
+            : BadRequest(new Response(400, "Fail"));
     }
 
     [HttpGet("get-by-key/{key}")]
-    [Authorize(Roles = nameof(Role.SuperAdmin))]
+    [Authorize(Roles = "SuperAdmin,Admin")]
     public async ValueTask<IActionResult> GetByCode([FromRoute] string key)
     {
-        if (string.IsNullOrWhiteSpace(key))
-            throw new InvalidOperationException("Key can't be empty!");
+        var result = await productOrchestrationService.GetByKeyAsync(key);
 
-        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id"));
-
-        var productItems = (await productItemService.GetAll(userId)).ToList();
-
-        var foundProductItems = productItems.Where(x =>
-            {
-                if (string.IsNullOrWhiteSpace(x.Title))
-                    return false;
-
-                if (!x.Title.Contains(key, StringComparison.OrdinalIgnoreCase))
-                    return false;
-
-                return true;
-            });
-
-        var result = new List<FullProduct>();
-
-        foreach (var productItem in foundProductItems)
-        {
-            Product product = null as Product;
-            try
-            {
-                product = await productService.GetByIdAsync(productItem.ProductId);
-            }
-            catch
-            {
-                product = null;
-            }
-
-            var fullProduct = new FullProduct
-            {
-                Product = product,
-                ProductItem = productItem
-            };
-
-            result.Add(fullProduct);
-        }
-
-        return Ok(new Response(200, "Success", result));
+        return result is not null ? Ok(new Response(200, "Success", result)) : BadRequest();
     }
 
     [HttpPost]
