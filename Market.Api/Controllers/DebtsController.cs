@@ -28,7 +28,7 @@ public class DebtsController(IDebtService debtService) : ControllerBase
     [HttpGet]
     public async ValueTask<IActionResult> GetAll()
     {
-        var userId = Guid.Parse(HttpContext.GetServerVariable("Id")!);
+        var userId = Guid.Parse(HttpContext.GetValueByClaimType("Id")!);
         var result = await debtService.GetAll(userId);
 
         return result is not null
