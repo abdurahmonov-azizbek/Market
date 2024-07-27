@@ -42,7 +42,7 @@ public class OrdersController(
         }
         else
         {
-            var admins = await userService.GetAllAsync(userId);
+            var admins = (await userService.GetAllAsync(userId)).ToList();
 
             var result = new List<Order>();
             foreach (var admin in admins)
