@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Market.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240730075627_Initial")]
+    [Migration("20240730191844_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -115,6 +115,9 @@ namespace Market.Data.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<int>("PaymentType")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");

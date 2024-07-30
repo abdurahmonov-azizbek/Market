@@ -2,6 +2,7 @@
 using Market.Domain.Entities;
 using Market.Domain.Exceptions;
 using Market.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System;
 using System.Data;
@@ -20,9 +21,17 @@ public class StatisticService(
         var orders = (await orderService.GetAll(userId)).ToList()
             .Where(order => order.CreatedDate.Date == date);
 
+        var cash = default(decimal);
+        var card = default(decimal);
+
         var products = new List<ProductCount>();
         foreach (var order in orders)
         {
+            if (order.PaymentType == Domain.Enums.PaymentType.Cash)
+                cash += order.Price;
+            else
+                card += order.Price;
+
             var product = await productService.GetByIdAsync(order.ProductId)
                 ?? throw new EntityNotFoundException(typeof(Product));
 
@@ -36,7 +45,7 @@ public class StatisticService(
         return new OrderStatistics
         {
             Count = orders.Count(),
-            Total = orders.Sum(order => order.Price),
+            Total = new Total { Card = card, Cash = cash, Sum = card + cash },
             Products = products
         };
     }
@@ -46,8 +55,17 @@ public class StatisticService(
         var orders = (await orderService.GetAll(userId)).ToList();
 
         var products = new List<ProductCount>();
+
+        var cash = default(decimal);
+        var card = default(decimal);
+
         foreach (var order in orders)
         {
+            if (order.PaymentType == Domain.Enums.PaymentType.Card)
+                card += order.Price;
+            else
+                cash += order.Price;
+
             var product = await productService.GetByIdAsync(order.ProductId)
                 ?? throw new EntityNotFoundException(typeof(Product));
 
@@ -61,7 +79,7 @@ public class StatisticService(
         return new OrderStatistics
         {
             Count = orders.Count(),
-            Total = orders.Sum(order => order.Price),
+            Total = new Total { Card = card, Cash = cash, Sum = card + cash },
             Products = products
         };
     }
@@ -81,8 +99,17 @@ public class StatisticService(
         orders = orders.Where(order => order.CreatedDate.Date == date).ToList();
 
         var profit = default(int);
+
+        var cash = default(decimal);
+        var card = default(decimal);
+
         foreach (var order in orders)
         {
+            if (order.PaymentType == Domain.Enums.PaymentType.Card)
+                card += order.Price;
+            else
+                cash += order.Price;
+
             var product = await productService.GetByIdAsync(order.ProductId)
                 ?? throw new EntityNotFoundException(typeof(Product));
 
@@ -110,7 +137,12 @@ public class StatisticService(
         return new Statistics
         {
             Orders = orders.Count(),
-            Total = orders.Sum(order => order.Price),
+            Total = new Total
+            {
+                Card = card,
+                Cash = cash,
+                Sum = card + cash
+            },
             Profit = profit,
             Debts = debtsSum,
             Costs = costsSum
@@ -129,8 +161,18 @@ public class StatisticService(
         }
 
         var profit = default(int);
+
+        var cash = default(decimal);
+        var card = default(decimal);
+
+
         foreach (var order in orders)
         {
+            if (order.PaymentType == Domain.Enums.PaymentType.Card)
+                card += order.Price;
+            else
+                cash += order.Price;
+
             var product = await productService.GetByIdAsync(order.ProductId)
                 ?? throw new EntityNotFoundException(typeof(Product));
 
@@ -157,7 +199,12 @@ public class StatisticService(
         return new Statistics
         {
             Orders = orders.Count(),
-            Total = orders.Sum(order => order.Price),
+            Total = new Total
+            {
+                Cash = cash,
+                Card = card,
+                Sum = cash + card
+            },
             Profit = profit,
             Debts = debtsSum,
             Costs = costsSum

@@ -21,9 +21,10 @@ public class OrderService(AppDbContext dbContext) : IOrderService
             Count = orderDTO.Count,
             Price = orderDTO.Price,
             UserId = userId,
+            PaymentType = orderDTO.PaymentType,
             CreatedDate = Helper.GetCurrentDateTime()
         };
-            
+
         await dbContext.Orders.AddAsync(order);
         await dbContext.SaveChangesAsync();
 
@@ -65,6 +66,7 @@ public class OrderService(AppDbContext dbContext) : IOrderService
         order.Code = orderDTO.Code;
         order.Title = orderDTO.Title;
         order.Price = orderDTO.Price;
+        order.PaymentType = orderDTO.PaymentType;
         order.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.Orders.Update(order);
