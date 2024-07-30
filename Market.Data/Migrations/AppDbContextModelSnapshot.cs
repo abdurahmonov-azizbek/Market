@@ -193,6 +193,9 @@ namespace Market.Data.Migrations
                     b.Property<long>("Code")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -201,6 +204,9 @@ namespace Market.Data.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");

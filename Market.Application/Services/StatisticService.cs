@@ -86,7 +86,7 @@ public class StatisticService(
             var product = await productService.GetByIdAsync(order.ProductId)
                 ?? throw new EntityNotFoundException(typeof(Product));
 
-            profit += (product.SalePrice - product.IncomingPrice) * product.Count;
+            profit += (product.SalePrice - product.IncomingPrice) * order.Count;
         }
 
         var debts = (await debtService.GetAll(userId)).ToList()
@@ -134,7 +134,7 @@ public class StatisticService(
             var product = await productService.GetByIdAsync(order.ProductId)
                 ?? throw new EntityNotFoundException(typeof(Product));
 
-            profit += (product.SalePrice - product.IncomingPrice) * product.Count;
+            profit += (product.SalePrice - product.IncomingPrice) * order.Count;
         }
 
         var debts = (await debtService.GetAll(userId)).ToList();

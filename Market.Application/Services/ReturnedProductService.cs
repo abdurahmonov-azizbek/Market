@@ -19,6 +19,8 @@ public class ReturnedProductService(AppDbContext dbContext) : IReturnedProductSe
             Code = returnedProductDTO.Code,
             CategoryId = returnedProductDTO.CategoryId,
             UserId = userId,
+            Count = returnedProductDTO.Count,
+            Price = returnedProductDTO.Price,
             CreatedDate = Helper.GetCurrentDateTime(),
         };
 
@@ -63,6 +65,8 @@ public class ReturnedProductService(AppDbContext dbContext) : IReturnedProductSe
         found.Title = returnedProductDTO.Title;
         found.Code = returnedProductDTO.Code;
         found.CategoryId = returnedProductDTO.CategoryId;
+        found.Count = returnedProductDTO.Count;
+        found.Price = returnedProductDTO.Price;
         found.UpdatedDate = Helper.GetCurrentDateTime();
 
         dbContext.ReturnedProducts.Update(found);
