@@ -36,9 +36,9 @@ public class CategoriesController(ICategoryService categoryService) : Controller
     }
 
     [HttpGet("{categoryId}")]
-    public async ValueTask<IActionResult> GetById([FromRoute] Guid id)
+    public async ValueTask<IActionResult> GetById([FromRoute] Guid categoryId)
     {
-        var result = await categoryService.GetByIdAsync(id);
+        var result = await categoryService.GetByIdAsync(categoryId);
 
         return result is not null
             ? Ok(new Response(200, "Success", result))
