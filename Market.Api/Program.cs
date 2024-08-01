@@ -82,12 +82,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 );
 
 //Add cors
-builder.Services.AddCors(options => options.AddPolicy("AllowSpecificOrigin", policy =>
+builder.Services.AddCors(options => options.AddPolicy("AllowAll", policy =>
 {
     policy
         .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
+        .AllowAnyHeader()
+        .AllowAnyMethod();
 }));
 
 
@@ -99,7 +99,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 //Use cors
-app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowAll");
 
 //Use custom middlewares
 app.UseMiddleware<ExceptionHandlingMiddleware>();
